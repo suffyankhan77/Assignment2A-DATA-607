@@ -1,0 +1,87 @@
+---
+title: "Week 2 Approach: SQL and R – Movie Ratings"
+author: "Muhammad Suffyan Khan"
+format: html
+editor: visual
+date: "2026-02-05"
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+## Objective
+
+The goal of this assignment is to collect a small **user–item ratings dataset** (people × movies), store it in a **SQL database (PostgreSQL)**, and analyze it in **R**. This project demonstrates an end-to-end workflow across **data collection, relational storage, querying, loading into R**, while also showing a reasonable strategy for **missing ratings**.
+
+## Data Collection Plan
+
+-   **Items (Movies):** I will select **six recent popular movies** (or similar media items) to increase the chance that participants have seen at least some of them.
+-   **Users (Participants):** I will survey **at least five people**.
+-   **Rating Scale:** Participants will rate any movie they have seen on a **1–5 integer scale**.
+-   **Missing Ratings:** If a participant has not seen a movie, the rating will be recorded as **missing (NULL)** instead of forcing a guess.
+
+Responses will be collected in a simple format (e.g., a small table) and then inserted into PostgreSQL.
+
+## Tools / Environment
+
+-   **Database:** PostgreSQL (local installation)\
+-   **GUI:** pgAdmin 4 (for running SQL scripts and verifying tables)\
+-   **R Packages (planned):** `DBI`, `RPostgres`, `tidyverse`
+
+> **Security Note:** Database passwords will **not** be included in the code. Connection credentials will be stored using environment variables or masked placeholders.
+
+## Database Design (Normalized Schema)
+
+To keep the solution professional and interview-ready, I will use a **normalized relational schema** to represent the many-to-many relationship between users and movies.
+
+Planned tables:
+
+-   `users(user_id, name)`
+-   `movies(movie_id, title, release_year)`
+-   `ratings(rating_id, user_id, movie_id, rating)`
+
+### Keys and Constraints (Planned)
+
+-   `users.user_id` and `movies.movie_id` will be **primary keys**
+-   `ratings.user_id` and `ratings.movie_id` will be **foreign keys**
+-   Ratings will be constrained to the range **1–5**
+-   A **unique constraint** on `(user_id, movie_id)` will prevent duplicate ratings
+
+This structure mirrors how real recommendation datasets are stored: users and movies are separate entities, and ratings are stored in a junction table.
+
+## Missing Data Strategy
+
+Missing ratings are expected because participants may not have seen every movie.
+
+I will handle missing data in two ways:
+
+1.  **In SQL:** Missing ratings will be represented as `NULL` (or omitted rows if a participant did not rate an item).
+2.  **In R:** When analyzing results, missing ratings will appear as `NA`. Summary statistics (means, medians) will be computed with `na.rm = TRUE` to avoid bias from missingness.
+
+To document missingness, I will report:
+
+-   ratings count per movie (coverage)
+-   ratings count per user
+-   how many missing ratings exist overall
+
+## Analysis Plan in R
+
+After populating the database, I will load the data from PostgreSQL into R using `DBI` + `RPostgres` and:
+
+-   Join users, movies, and ratings into one tidy dataframe
+-   Compute simple summaries:
+    -   average rating per movie (with number of ratings)
+    -   average rating per user
+    -   overall rating distribution (1–5)
+-   Optionally reshape into a **user–item matrix** (wide format) to illustrate how the dataset resembles input for collaborative filtering (no advanced recommender model required).
+
+## Reproducibility Plan
+
+Even if I use pgAdmin to run queries, I will include the full SQL scripts required to:
+
+-   create the tables (`CREATE TABLE`)
+-   populate them (`INSERT INTO`)
+-   query them (`SELECT ... JOIN ...`)
+
+All code (SQL + R + Quarto) will be stored in a GitHub repository for submission, with sensitive credentials removed or masked.
