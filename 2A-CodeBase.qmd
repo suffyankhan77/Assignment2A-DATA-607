@@ -3,7 +3,7 @@ title: "Week 2 CodeBase: SQL and R – Movie Ratings"
 author: "Muhammad Suffyan Khan"
 format: html
 editor: visual
-date: "2026-02-05"
+date: "2026-02-08"
 execute:
   echo: true
   warning: false
@@ -169,3 +169,4 @@ ratings_complete %>%
 ```{r}
 dbDisconnect(con)
 ```
+
