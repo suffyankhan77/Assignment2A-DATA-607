@@ -170,3 +170,10 @@ ratings_complete %>%
 dbDisconnect(con)
 ```
 
+## Conclusion
+
+This assignment demonstrates how relational databases and R can work together in a data science workflow.
+
+PostgreSQL is used for structured storage and integrity constraints, while R is used for data manipulation, missing-value handling, and analysis.
+
+The resulting dataset resembles the structure of a user–item ratings matrix, which is commonly used in recommendation systems.
